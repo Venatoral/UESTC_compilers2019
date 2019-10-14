@@ -5,7 +5,7 @@ author：@newhans @JimHeisenberg
 branch里有@JimHeisenberg同学写的windowsVersion  
 还在用win的同学可以康康！  
 
-# environment
+# environment for windows
 flex-2.5.4a-1  
 gcc version 8.2.0  
 
