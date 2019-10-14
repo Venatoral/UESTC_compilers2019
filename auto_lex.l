@@ -43,9 +43,9 @@ void checkKeywords (char *pword)
 
 %}
 
-INTEGER   [+-]?[0-9]+[0-9]*
+INTEGER   	[0-9]+[0-9]*
 
-FLOAT [+-]?[0-9]+"."[0-9]*
+FLOAT 		[0-9]+"."[0-9]*
 
 SYMBOL 		[~!@#$%^&|*+-<>:?=/{}\[\]\(\)]
 
