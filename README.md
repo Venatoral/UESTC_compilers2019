@@ -9,6 +9,11 @@ branch里有@JimHeisenberg同学写的windowsVersion
 flex-2.5.4a-1  
 gcc version 8.2.0  
 
+# environment for linux
+ubuntu 18.04  
+flex 2.6.4  
+gcc version 7.4.0  
+
 # usage
 flex auto_lex.l  
 gcc lex.yy.c -o test -lfl  
