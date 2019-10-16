@@ -1,111 +1,76 @@
 %{
+#include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-//Declarations
-int nextToken;
 
-enum{
-    ID = 258,
-    INT,
-    FLO, 
-    STR,
-    SYM,
-    OPE,
-    EQU,
-    GEQU,
-    LEQU,
-    AND,
-    OR,
-    INVERT,
-    ERROR
-};
-
-char *keywords[] = {"abstract", "boolean", "break", "byte", "case",
-                    "class", "continue", "default", "do", "double", "false", "final", "float",
-                    "for", "if", "implements", "import", "instanceof", "int", "interface",
-                    "long", "native", "package", "private", "protected", "public", "return",
-                    "short", "static", "super", "switch", "synchronized", "this", "threadsafe",
-                    "throw", "transient", "true", "try", "void", "while", 0};
-
-void checkKeywords (char *pword)
-{
-	int i = 0;
-	while (keywords[i] != 0)
-	{
-		char *pkeyword = keywords[i];
-		if (strcmp(pword, pkeyword) == 0)
-		{
-			nextToken = 300 + i;
-			return ;
-		}
-		i++;
-	}
-}
+int assign();
 
 %}
 
-INTEGER   [+-]?[0-9]+[0-9]*
-
-FLOAT [+-]?[0-9]+"."[0-9]*
-
-SYMBOL 		[~!@#$%^&|*+-<>:?=/{}\[\]\(\)]
-
-STRING		\"([^\"]|(\\\"))*\"
-
-OPERATER	"=="|">="|"<="|"&&"|"!"|"!="
-	
-B_COMMENT 	"/*"([^\*]|(\*)+[^/])*"*/"
-
-L_COMMENT	"//"(.*)
-
-KEYWORDS1 "abstract"|"boolean"|"break"|"byte"|"case"|"class"|"continue"|"default"|"do"|"double"|"false"|"final"|"float""for"|"if"|"implements"|"import"|"instanceof"|"int"|"interface"|"long"|"native"|"package"|"private"|"protected"|"public"|"return"|"short"|"static""super"|"switch"|"synchronized"|"this"|"threadsafe"|"throw"|"transient"|"true"|"try"|"void"|"while"|"0"
-%%
-
-{KEYWORDS1}	{ checkKeywords(yytext); printf(" <%6d,  %s  > \n", nextToken, yytext); }
-
-
-[a-zA-Z][a-zA-Z_0-9]* | //标识符
-[a-zA-Z][a-zA-Z0-9]*"_"[~!@#$%^&|*+-<>:?=/][~!@#$%^&|*+-<>:?=/]* | 
-"`"(.*)"`"	{ nextToken = ID; printf(" <%6d,  %s  > \n", nextToken, yytext); }
-
-{INTEGER} 	{ nextToken = INT; printf(" <%6d,  %s  > \n", nextToken, yytext); }
-
-{FLOAT} 	{ nextToken = FLO; printf(" <%6d,  %s  > \n", nextToken, yytext); }
-
-{STRING} 	{ nextToken = STR; printf(" <%6d,  %s  > \n", nextToken, yytext); }
-
-{SYMBOL}	{ nextToken = SYM; printf(" <%6d,  %s  > \n", nextToken, yytext); }
-
-{OPERATER}	{ nextToken = OPE; printf(" <%6d,  %s  > \n", nextToken, yytext); }
-
-{B_COMMENT} { /*忽略注释*/ }
-{L_COMMENT} { /*忽略注释*/ }
-
-[ \n\t] { /*忽略空格和换行符*/ }
-
-. { printf("Unknow: %s\n", yytext); }
+space       [\ \t\n\f\r]
+comment     \/[^\n]*\n|\/\*[^(\*\/)]*\*\/
+int         [0-9]+
+float       [0-9]+\.[0-9]*|\.[0-9]+
+char        \'([^\\\n\']|\\[\\\'\"btnfr0])\'
+string      \"([^\\\n\"]|\\[\\\'\"btnfr0])*\"
+bool        true|false
+multiop     \=\=|\!\=|\+\+|\+\=|\-\-|\-\=|\*\=|\/\=|\%\=|\&\&|\&\=|\|\||\|\=|\^\=|\<\<|\<\=|\<\<\=|\>\>|\>\>\>|\>\=|\>\>\=|\>\>\>\=
+symbol      [\\\'\"\(\)\[\]\{\}\<\>\=\+\-\*\/\%\&\|\^\~\,\.\:\;\!\?\`\@\#]
+keywords    private|protected|public|abstract|class|extends|final|implements|interface|native|new|static|strictfp|synchronized|transient|volatile|break|case|continue|default|do|else|for|if|instanceof|return|switch|while|assert|catch|finally|throw|throws|try|import|package|boolean|byte|char|double|float|int|long|short|super|this|void|goto|const|null
+id          [a-zA-Z$_][a-zA-Z$_0-9]*
 
 %%
 
-//user function
-int main(int argc, char *argv[]){
-	if (argc < 2)
-	{
-		printf("ERROR: input file name is needed. \n");
-		exit(0);
-	}
-	yyin = fopen(argv[1], "r");
-	if (yyin == NULL)
-	{
-		printf("ERROR:can not open file.\n");
-		exit(0);
-	}
-	
-	yylex();
-	
+{comment}       {                                                    return -2;}
+{space}         {                                                    return -1;}
+<<EOF>>         {fprintf(yyout, "<%6d, %-9s >\n",  -1,       "EOF"); return  0;}
+{int}           {fprintf(yyout, "<%6d, %-9s >\n", 261,      yytext); return  1;}
+{float}         {fprintf(yyout, "<%6d, %-9s >\n", 262,      yytext); return  2;}
+{char}          {fprintf(yyout, "<%6d, %-9s >\n", 263,      yytext); return  3;}
+{string}        {fprintf(yyout, "<%6d, %-9s >\n", 264,      yytext); return  4;}
+{bool}          {fprintf(yyout, "<%6d, %-9s >\n", 265,      yytext); return  5;}
+{multiop}       {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  6;}
+{symbol}        {fprintf(yyout, "<%6d, %-9s >\n", *yytext,  yytext); return  7;}
+{keywords}      {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  8;}
+{id}            {fprintf(yyout, "<%6d, %-9s >\n", 269,      yytext); return  9;}
+
+%%
+
+int main(int argc, char const *argv[]) {
+    int yyres = 1;
+    if (argc >= 2) {
+        yyin = fopen(argv[1], "r");
+        if (yyin == NULL) {
+            printf("Can't open file %s\n", argv[1]);
+            return 1;
+        }
+    }
+    while (yyres) {
+        yyres = yylex();
+    }
+    return 0;
 }
 
-int yywrap(){
-	return 1;
+int assign() {
+    static int offset = 300-22;
+    static char *pwords[] = {
+        "==", "!=", "++", "+=", "--", "-=", "*=", "/=", "%=", "&&", "&=", "||", "|=", "^=", "<<", "<=", "<<=", ">>", ">>>", ">=", ">>=", ">>>=", 
+        "private", "protected", "public",
+        "abstract", "class", "extends", "final", "implements", "interface", "native", "new", "static", "strictfp", "synchronized", "transient", "volatile", 
+        "break", "case", "continue", "default", "do", "else", "for", "if", "instanceof", "return", "switch", "while", 
+        "assert", "catch", "finally", "throw", "throws", "try", 
+        "import", "package", 
+        "boolean", "byte", "char", "double", "float", "int", "long", "short", 
+        "super", "this", "void", 
+        "goto", "const", "null", 
+        NULL
+    };
+    int i = 0;
+    while ( pwords[i] ) {
+        if ( !strcmp(yytext, pwords[i]) ) {
+            return offset + i;
+        }
+        i++;
+    }
+    return 0;
 }
-
-
