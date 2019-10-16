@@ -23,6 +23,13 @@ gcc version 7.4.0
 flex auto_lex.l  
 gcc lex.yy.c -o test -lfl  
 
+# reference
+(https://pandolia.net/tinyc/ch1_overview.html)   
+(https://sighingnow.github.io/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/lex_yacc.html)      
+(https://juejin.im/post/5b5db5b8e51d4519155720d2)      
+(https://segmentfault.com/a/1190000011674745)     
+(https://jin-yang.github.io/post/program-concept-lexical-flex-introduce.html)    
+
 # LICENSE  
 ## MIT  
 
