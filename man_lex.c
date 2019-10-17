@@ -12,12 +12,16 @@ enum CharClass
     DIGIT,
     SYMBOL,
     __EOF__,
-    INT = 261,
-    FLOAT = 262,
-    CHAR = 263,
-    STRING = 264,
-    BOOL = 265,
-    ID = 269,
+    ID = 260,
+    BYTE,
+    SHORT,
+    INT,
+    LONG,
+    FLOAT,
+    DOUBLE,
+    CHAR,
+    STRING,
+    BOOL,
 } charClass;
 int lexLen;
 char lexeme[MAX_LEN];
