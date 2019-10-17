@@ -15,9 +15,10 @@ char        \'([^\\\n\']|\\[\\\'\"btnfr0])\'
 string      \"([^\\\n\"]|\\[\\\'\"btnfr0])*\"
 bool        true|false
 multiop     \=\=|\!\=|\+\+|\+\=|\-\-|\-\=|\*\=|\/\=|\%\=|\&\&|\&\=|\|\||\|\=|\^\=|\<\<|\<\=|\<\<\=|\>\>|\>\>\>|\>\=|\>\>\=|\>\>\>\=
-symbol      [\\\'\"\(\)\[\]\{\}\<\>\=\+\-\*\/\%\&\|\^\~\,\.\:\;\!\?\`\@\#]
+symbol      [\(\)\[\]\{\}\<\>\=\+\-\*\/\%\&\|\^\~\,\.\:\;\!\?\@]
 keywords    private|protected|public|abstract|class|extends|final|implements|interface|native|new|static|strictfp|synchronized|transient|volatile|break|case|continue|default|do|else|for|if|instanceof|return|switch|while|assert|catch|finally|throw|throws|try|import|package|boolean|byte|char|double|float|int|long|short|super|this|void|goto|const|null
 id          [a-zA-Z$_][a-zA-Z$_0-9]*
+unknown     [\\\'\"\`\#]
 
 %%
 
@@ -33,6 +34,7 @@ id          [a-zA-Z$_][a-zA-Z$_0-9]*
 {symbol}        {fprintf(yyout, "<%6d, %-9s >\n", *yytext,  yytext); return  7;}
 {keywords}      {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  8;}
 {id}            {fprintf(yyout, "<%6d, %-9s >\n", 269,      yytext); return  9;}
+{unknown}       {fprintf(yyout, "<%6d, %-9s >\n", 0  ,      yytext); return 10;}
 
 %%
 
@@ -67,10 +69,10 @@ int assign() {
     };
     int i = 0;
     while ( pwords[i] ) {
-        if ( !strcmp(yytext, pwords[i]) ) {
+        if ( strcmp(yytext, pwords[i]) )
+            i++;
+        else
             return offset + i;
-        }
-        i++;
     }
     return 0;
 }
