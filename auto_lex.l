@@ -8,7 +8,7 @@ int assign();
 %}
 
 space       [\ \t\n\f\r]
-comment     
+comment     \/\/.*|\/\*(.|\n)*\*\/
 long        [0-9]+[lL]
 int         [0-9]+
 float       [0-9]+\.[0-9]*[fF]|\.[0-9]+[fF]
