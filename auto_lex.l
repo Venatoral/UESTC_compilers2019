@@ -54,8 +54,8 @@ int main(int argc, char const *argv[]) {
 }
 
 int assign() {
-    static int offset = 300-22;
-    static char *pwords[] = {
+    int offset = 300-22;
+    char *pwords[] = {
         "==", "!=", "++", "+=", "--", "-=", "*=", "/=", "%=", "&&", "&=", "||", "|=", "^=", "<<", "<=", "<<=", ">>", ">>>", ">=", ">>=", ">>>=", 
         "private", "protected", "public",
         "abstract", "class", "extends", "final", "implements", "interface", "native", "new", "static", "strictfp", "synchronized", "transient", "volatile", 
