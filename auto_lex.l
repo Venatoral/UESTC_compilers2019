@@ -8,9 +8,11 @@ int assign();
 %}
 
 space       [\ \t\n\f\r]
-comment     \/[^\n]*\n|\/\*[^(\*\/)]*\*\/
+comment     
+long        [0-9]+[lL]
 int         [0-9]+
-float       [0-9]+\.[0-9]*|\.[0-9]+
+float       [0-9]+\.[0-9]*[fF]|\.[0-9]+[fF]
+double      [0-9]+\.[0-9]*|\.[0-9]+
 char        \'([^\\\n\']|\\[\\\'\"btnfr0])\'
 string      \"([^\\\n\"]|\\[\\\'\"btnfr0])*\"
 bool        true|false
@@ -22,19 +24,21 @@ unknown     .|[\\\'\"\`\#]
 
 %%
 
-{comment}       {                                                    return -2;}
+{comment}       {                                                    return -1;}
 {space}         {                                                    return -1;}
 <<EOF>>         {fprintf(yyout, "<%6d, %-9s >\n",  -1,       "EOF"); return  0;}
-{int}           {fprintf(yyout, "<%6d, %-9s >\n", 261,      yytext); return  1;}
-{float}         {fprintf(yyout, "<%6d, %-9s >\n", 262,      yytext); return  2;}
-{char}          {fprintf(yyout, "<%6d, %-9s >\n", 263,      yytext); return  3;}
-{string}        {fprintf(yyout, "<%6d, %-9s >\n", 264,      yytext); return  4;}
-{bool}          {fprintf(yyout, "<%6d, %-9s >\n", 265,      yytext); return  5;}
-{multiop}       {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  6;}
-{symbol}        {fprintf(yyout, "<%6d, %-9s >\n", *yytext,  yytext); return  7;}
-{keywords}      {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  8;}
-{id}            {fprintf(yyout, "<%6d, %-9s >\n", 269,      yytext); return  9;}
-{unknown}       {fprintf(yyout, "<%6d, %-9s >\n", 0  ,      yytext); return 10;}
+{long}          {fprintf(yyout, "<%6d, %-9s >\n", 264,      yytext); return  1;}
+{int}           {fprintf(yyout, "<%6d, %-9s >\n", 263,      yytext); return  1;}
+{float}         {fprintf(yyout, "<%6d, %-9s >\n", 265,      yytext); return  1;}
+{double}        {fprintf(yyout, "<%6d, %-9s >\n", 266,      yytext); return  1;}
+{char}          {fprintf(yyout, "<%6d, %-9s >\n", 267,      yytext); return  1;}
+{string}        {fprintf(yyout, "<%6d, %-9s >\n", 268,      yytext); return  1;}
+{bool}          {fprintf(yyout, "<%6d, %-9s >\n", 269,      yytext); return  1;}
+{multiop}       {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
+{symbol}        {fprintf(yyout, "<%6d, %-9s >\n", *yytext,  yytext); return  1;}
+{keywords}      {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
+{id}            {fprintf(yyout, "<%6d, %-9s >\n", 260,      yytext); return  1;}
+{unknown}       {fprintf(yyout, "<%6d, %-9s >\n",   0,      yytext); return -1;}
 
 %%
 
