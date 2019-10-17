@@ -107,6 +107,7 @@ void removeBlank()
 
 void removeComment()
 {
+    removeBlank();
     if (nextChar == '/')
     {
         if (next2Char == '/')
