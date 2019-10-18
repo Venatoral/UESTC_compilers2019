@@ -29,6 +29,7 @@ char nextChar;
 char next2Char;
 int nextToken;
 FILE *inFile;
+FILE *outFile;
 
 void getChar();
 void addChar();
@@ -44,16 +45,25 @@ int checkKeywords();
 
 void main(int argc, char const *argv[])
 {
-    if (argc < 2)
+    inFile = stdin;
+    outFile = stdout;
+    if (argc >= 2)
     {
-        printf("ERROR: input file name is needed.\n");
-        return;
+        inFile = fopen(argv[1], "r");
+        if (inFile == NULL)
+        {
+            printf("ERROR: can not open file %s\n", argv[1]);
+            return;
+        }
     }
-    inFile = fopen(argv[1], "r");
-    if (inFile == NULL)
+    if (argc >= 3)
     {
-        printf("ERROR: can not open file.\n");
-        return;
+        outFile = fopen(argv[2], "w");
+        if (outFile == NULL)
+        {
+            printf("ERROR: can not open file.\n", argv[2]);
+            return;
+        }
     }
 
     getChar();
@@ -249,7 +259,7 @@ void lexer()
         lexeme[3] = '\0';
         break;
     }
-    printf("<%6d, %-9s >\n", nextToken, lexeme);
+    fprintf(outFile, "<%6d, %-9s >\n", nextToken, lexeme);
 }
 
 int checkNumber()
@@ -421,7 +431,7 @@ int checkSymbol()
         NULL};
     int i = 0;
     if (lexLen == 1)
-        return nextChar;
+        return lexeme[0];
     while (pmultiop[i] != 0)
     {
         if (strcmp(lexeme, pmultiop[i]) == 0)
