@@ -7,8 +7,8 @@ int assign();
 
 %}
 
-space       [\ \t\n\f\r]
 comment     \/\/.*|\/\*(.|\n)*\*\/
+space       [\ \t\n\f\r]
 long        [0-9]+[lL]
 int         [0-9]+
 float       [0-9]+\.[0-9]*[fF]|\.[0-9]+[fF]
@@ -48,6 +48,13 @@ int main(int argc, char const *argv[]) {
         yyin = fopen(argv[1], "r");
         if (yyin == NULL) {
             printf("Can't open file %s\n", argv[1]);
+            return 1;
+        }
+    }
+    if (argc >= 3) {
+        yyout = fopen(argv[2], "w");
+        if (yyout == NULL) {
+            printf("Can't open file %s\n", argv[2]);
             return 1;
         }
     }
