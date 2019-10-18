@@ -163,7 +163,7 @@ void lexer()
     case DIGIT:
         addChar();
         getChar();
-        while (charClass == DIGIT || nextChar == '.')
+        while (charClass == DIGIT || nextChar == '.' || nextChar == 'l' || nextChar == 'L' || nextChar == 'f' || nextChar == 'F')
         {
             addChar();
             getChar();
@@ -256,17 +256,23 @@ int checkNumber()
 {
     int i = 0;
     int dotCount = 0;
+    int type = 0;
     for (i = 0; i < lexLen; i++)
     {
         if (lexeme[i] == '.')
             dotCount++;
+        if (i != lexLen - 1 && (lexeme[i] == 'l' || lexeme[i] == 'L' || lexeme[i] == 'f' || lexeme[i] == 'F'))
+            return UNKNOWN;
     }
     if (dotCount == 0)
-        return INT;
-    else if (dotCount == 1)
-        return FLOAT;
-    else
-        return UNKNOWN;
+        type = INT;
+    if (dotCount == 1)
+        type = DOUBLE;
+    if (lexeme[lexLen - 1] == 'l' || lexeme[lexLen - 1] == 'L')
+        type = LONG;
+    if (lexeme[lexLen - 1] == 'f' || lexeme[lexLen - 1] == 'F')
+        type = FLOAT;
+    return type;
 }
 
 int checkChar()
