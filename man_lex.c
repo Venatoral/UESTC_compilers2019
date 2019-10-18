@@ -39,7 +39,7 @@ void lexer();
 int checkNumber();
 int checkChar();
 int checkString();
-int addSymbol();
+void addSymbol();
 int checkSymbol();
 int checkKeywords();
 
@@ -241,10 +241,8 @@ void lexer()
         nextToken = checkString();
         break;
     case SYMBOL:
-        if (addSymbol())
-            nextToken = checkSymbol();
-        else
-            nextToken = 0;
+        addSymbol();
+        nextToken = checkSymbol();
         break;
     case UNKNOWN:
         addChar();
@@ -305,11 +303,16 @@ int checkString()
     return UNKNOWN;
 }
 
-int addSymbol()
+void addSymbol()
 {
 
     switch (nextChar)
     {
+        //can be number, but we only regard it as dot
+    case '.':
+        addChar();
+        getChar();
+        break;
         //can not be binary operator
     case '(':
     case ')':
@@ -320,7 +323,6 @@ int addSymbol()
     case '?':
     case ':':
     case ',':
-    case '.':
     case ';':
     case '@':
         addChar();
@@ -396,10 +398,8 @@ int addSymbol()
     default:
         addChar();
         getChar();
-        return 0;
         break;
     }
-    return 1;
 }
 
 int checkSymbol()
@@ -431,7 +431,12 @@ int checkSymbol()
         NULL};
     int i = 0;
     if (lexLen == 1)
-        return lexeme[0];
+    {
+        if (lexeme[0] == '`' || lexeme[0] == '#' || lexeme[0] == '\\')
+            return UNKNOWN;
+        else
+            return lexeme[0];
+    }
     while (pmultiop[i] != 0)
     {
         if (strcmp(lexeme, pmultiop[i]) == 0)
