@@ -33,7 +33,7 @@ unknown     .|[\\\'\"\`\#]
 {double}        {fprintf(yyout, "<%6d, %-9s >\n", 266,      yytext); return  1;}
 {char}          {fprintf(yyout, "<%6d, %-9s >\n", 267,      yytext); return  1;}
 {string}        {fprintf(yyout, "<%6d, %-9s >\n", 268,      yytext); return  1;}
-{bool}          {fprintf(yyout, "<%6d, %-9s >\n", 269,      yytext); return  1;}
+{bool}          {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
 {multiop}       {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
 {symbol}        {fprintf(yyout, "<%6d, %-9s >\n", *yytext,  yytext); return  1;}
 {keywords}      {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
@@ -79,11 +79,16 @@ int assign() {
         NULL
     };
     int i = 0;
-    while ( pwords[i] ) {
-        if ( strcmp(yytext, pwords[i]) )
-            i++;
-        else
+
+    if (strcmp(yytext, "false") == 0)
+        return 270;
+    if (strcmp(yytext, "true") == 0)
+        return 271;
+    while (pwords[i]) {
+        if (strcmp(yytext, pwords[i]) == 0)
             return offset + i;
+        else
+            i++;
     }
     return 0;
 }

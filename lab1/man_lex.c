@@ -502,13 +502,17 @@ int checkKeywords()
         "null",
         NULL};
     int i = 0;
-    if (strcmp(lexeme, "true") == 0 || strcmp(lexeme, "false") == 0)
-        return BOOL;
+
+    if (strcmp(lexeme, "false") == 0)
+        return 270;
+    if (strcmp(lexeme, "true") == 0)
+        return 271;
     while (keywords[i] != 0)
     {
         if (strcmp(lexeme, keywords[i]) == 0)
             return offset + i;
-        i++;
+        else
+            i++;
     }
     return ID;
 }
