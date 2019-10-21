@@ -1,0 +1,13 @@
+
+lab1/man_lex.o
+lab1/lex.yy.c
+lab1/lex.yy.o
+lab1/test.exe
+lab1/test
+
+lab2/rdcheck.o
+lab2/rdparser.o
+lab2/lex.yy.c
+lab2/lex.yy.o
+lab2/test.exe
+lab2/test
