@@ -43,7 +43,7 @@ void addSymbol();
 int checkSymbol();
 int checkKeywords();
 
-void main(int argc, char const *argv[])
+int main(int argc, char const *argv[])
 {
     inFile = stdin;
     outFile = stdout;
@@ -53,7 +53,7 @@ void main(int argc, char const *argv[])
         if (inFile == NULL)
         {
             printf("ERROR: can not open file %s\n", argv[1]);
-            return;
+            return 1;
         }
     }
     if (argc >= 3)
@@ -62,13 +62,14 @@ void main(int argc, char const *argv[])
         if (outFile == NULL)
         {
             printf("ERROR: can not open file.\n", argv[2]);
-            return;
+            return 1;
         }
     }
 
     getChar();
     while (nextToken != EOF)
         lexer();
+    return 0;
 }
 
 void getChar()
