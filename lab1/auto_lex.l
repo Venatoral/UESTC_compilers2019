@@ -24,21 +24,21 @@ unknown     .|[\\\'\"\`\#]
 
 %%
 
-{comment}       {                                                    return -1;}
-{space}         {                                                    return -1;}
-<<EOF>>         {fprintf(yyout, "<%6d, %-9s >\n",  -1,       "EOF"); return  0;}
-{long}          {fprintf(yyout, "<%6d, %-9s >\n", 264,      yytext); return  1;}
-{int}           {fprintf(yyout, "<%6d, %-9s >\n", 263,      yytext); return  1;}
-{float}         {fprintf(yyout, "<%6d, %-9s >\n", 265,      yytext); return  1;}
-{double}        {fprintf(yyout, "<%6d, %-9s >\n", 266,      yytext); return  1;}
-{char}          {fprintf(yyout, "<%6d, %-9s >\n", 267,      yytext); return  1;}
-{string}        {fprintf(yyout, "<%6d, %-9s >\n", 268,      yytext); return  1;}
-{bool}          {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
-{multiop}       {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
-{symbol}        {fprintf(yyout, "<%6d, %-9s >\n", *yytext,  yytext); return  1;}
-{keywords}      {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return  1;}
-{id}            {fprintf(yyout, "<%6d, %-9s >\n", 260,      yytext); return  1;}
-{unknown}       {fprintf(yyout, "<%6d, %-9s >\n",   0,      yytext); return -1;}
+{comment}       {                                                    return        0;}
+{space}         {                                                    return        0;}
+<<EOF>>         {fprintf(yyout, "<%6d, %-9s >\n",  -1,       "EOF"); return       -1;}
+{long}          {fprintf(yyout, "<%6d, %-9s >\n", 264,      yytext); return      264;}
+{int}           {fprintf(yyout, "<%6d, %-9s >\n", 263,      yytext); return      263;}
+{float}         {fprintf(yyout, "<%6d, %-9s >\n", 265,      yytext); return      265;}
+{double}        {fprintf(yyout, "<%6d, %-9s >\n", 266,      yytext); return      266;}
+{char}          {fprintf(yyout, "<%6d, %-9s >\n", 267,      yytext); return      267;}
+{string}        {fprintf(yyout, "<%6d, %-9s >\n", 268,      yytext); return      268;}
+{bool}          {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return assign();}
+{multiop}       {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return assign();}
+{symbol}        {fprintf(yyout, "<%6d, %-9s >\n", *yytext,  yytext); return  *yytext;}
+{keywords}      {fprintf(yyout, "<%6d, %-9s >\n", assign(), yytext); return assign();}
+{id}            {fprintf(yyout, "<%6d, %-9s >\n", 260,      yytext); return      260;}
+{unknown}       {fprintf(yyout, "<%6d, %-9s >\n",   0,      yytext); return        0;}
 
 %%
 
@@ -58,7 +58,7 @@ int main(int argc, char const *argv[]) {
             return 1;
         }
     }
-    while (yyres) {
+    while (yyres != EOF) {
         yyres = yylex();
     }
     return 0;
