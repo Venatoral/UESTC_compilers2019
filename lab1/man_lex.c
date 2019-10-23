@@ -7,11 +7,11 @@
 
 enum CharClass
 {
-    UNKNOWN,
+    __EOF__ = -1,
+    UNKNOWN = 0,
     LETTER,
     DIGIT,
     SYMBOL,
-    __EOF__,
     ID = 260,
     cBYTE,
     cSHORT,
