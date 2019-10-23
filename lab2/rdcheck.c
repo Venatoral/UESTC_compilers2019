@@ -96,7 +96,6 @@ int main(int argc, char **argv)
         }
     }
     //printf("%d",yylex());
-    advance();
     program();
     return 0;
 }
@@ -139,15 +138,16 @@ int tokenType_is_CMP()
     return is_CMP;
 }
 
-//
+//scan one token
 void advance()
 {
     tokenType = yylex();
-    if (tokenType == EOF || tokenType == UNKNOWN)
-    {
-        exit(0);
-    }
-    printf("token: %s\n", yytext);
+    if (tokenType == EOF)
+        printf("Successfully match all content.\n");
+    else if (tokenType == UNKNOWN)
+        printf("unknown:  %s\n", yytext);
+    else
+        printf("token: %s\n", yytext);
 }
 
 //  program
@@ -157,6 +157,7 @@ void advance()
 int program()
 {
     int isMatch = 0;
+    advance(); //first advance
 label:
     if (external_declaration())
     {
@@ -232,13 +233,13 @@ int declarator_list()
 label:
     if (declarator())
     {
-        isMatch = 1;
         if (tokenType == ',')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
@@ -253,13 +254,13 @@ int intstr_list()
 label:
     if (initializer())
     {
-        isMatch = 1;
         if (tokenType == ',')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
@@ -299,18 +300,15 @@ int declarator()
     int isMatch = 0;
     if (tokenType == ID)
     {
-        isMatch = 1;
         advance();
         if (tokenType == '=')
         {
-            isMatch = 0;
             advance();
             if (expr())
                 isMatch = 1;
         }
         else if (tokenType == '(')
         {
-            isMatch = 0;
             advance();
             parameter_list();
             if (tokenType == ')')
@@ -321,32 +319,33 @@ int declarator()
         }
         else if (tokenType == '[')
         {
-            isMatch = 0;
             advance();
             expr();
             if (tokenType == ']')
             {
-                isMatch = 1;
                 advance();
-            }
-            if (tokenType == '=')
-            {
-                isMatch = 0;
-                advance();
-                if (tokenType == '{')
+                if (tokenType == '=')
                 {
                     advance();
-                    if (intstr_list())
+                    if (tokenType == '{')
                     {
-                        if (tokenType == '}')
+                        advance();
+                        if (intstr_list())
                         {
-                            isMatch = 1;
-                            advance();
+                            if (tokenType == '}')
+                            {
+                                isMatch = 1;
+                                advance();
+                            }
                         }
                     }
                 }
+                else
+                    isMatch = 1;
             }
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
@@ -361,13 +360,13 @@ int parameter_list()
 label:
     if (parameter())
     {
-        isMatch = 1;
         if (tokenType == ',')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
@@ -468,12 +467,14 @@ int statement()
                 {
                     advance();
                     if (statement())
-                        isMatch = 1;
-                    if (tokenType == ELSE)
                     {
-                        isMatch = 0;
-                        advance();
-                        if (statement())
+                        if (tokenType == ELSE)
+                        {
+                            advance();
+                            if (statement())
+                                isMatch = 1;
+                        }
+                        else
                             isMatch = 1;
                     }
                 }
@@ -592,13 +593,13 @@ int cmp_expr()
 label:
     if (add_expr())
     {
-        isMatch = 1;
         if (tokenType_is_CMP())
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
@@ -614,19 +615,18 @@ int add_expr()
 label:
     if (mul_expr())
     {
-        isMatch = 1;
         if (tokenType == '+')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
         else if (tokenType == '-')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
@@ -644,25 +644,23 @@ int mul_expr()
 label:
     if (primary_expr())
     {
-        isMatch = 1;
         if (tokenType == '*')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
         else if (tokenType == '/')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
         else if (tokenType == '%')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     else if (tokenType == '-')
     {
@@ -720,7 +718,7 @@ int primary_expr()
                 }
             }
         }
-        else if (tokenType == '=') //TODO
+        else if (tokenType == '=')
         {
             advance();
             if (expr())
@@ -770,13 +768,13 @@ int expr_list()
 label:
     if (expr())
     {
-        isMatch = 1;
         if (tokenType == ',')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
@@ -791,14 +789,14 @@ int id_list()
 label:
     if (tokenType == ID)
     {
-        isMatch = 1;
         advance();
         if (tokenType == ',')
         {
-            isMatch = 0;
             advance();
             goto label;
         }
+        else
+            isMatch = 1;
     }
     return isMatch;
 }
