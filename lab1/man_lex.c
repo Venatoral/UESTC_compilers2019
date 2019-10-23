@@ -13,15 +13,15 @@ enum CharClass
     SYMBOL,
     __EOF__,
     ID = 260,
-    BYTE,
-    SHORT,
-    INT,
-    LONG,
-    FLOAT,
-    DOUBLE,
-    CHAR,
-    STRING,
-    BOOL,
+    cBYTE,
+    cSHORT,
+    cINT,
+    cLONG,
+    cFLOAT,
+    cDOUBLE,
+    cCHAR,
+    cSTRING,
+    cBOOL,
     //"false"270, "true"271,
     //single operator ascii
     //"=="278, "!="279, "++"280, "+="281, "--"282, "-="283, "*="284, "/="285, "%="286, 
@@ -107,9 +107,9 @@ void getChar()
     else if (isdigit(nextChar))
         charClass = DIGIT;
     else if (nextChar == '\'')
-        charClass = CHAR;
+        charClass = cCHAR;
     else if (nextChar == '\"')
-        charClass = STRING;
+        charClass = cSTRING;
     else if (ispunct(nextChar))
         charClass = SYMBOL;
     else
@@ -194,7 +194,7 @@ void lexer()
         }
         nextToken = checkNumber();
         break;
-    case CHAR:
+    case cCHAR:
         while (1)
         {
             if (nextChar != '\\' && next2Char == '\'')
@@ -224,7 +224,7 @@ void lexer()
         }
         nextToken = checkChar();
         break;
-    case STRING:
+    case cSTRING:
         while (1)
         {
             if (nextChar != '\\' && next2Char == '\"')
@@ -287,13 +287,13 @@ int checkNumber()
             return UNKNOWN;
     }
     if (dotCount == 0)
-        type = INT;
+        type = cINT;
     if (dotCount == 1)
-        type = DOUBLE;
+        type = cDOUBLE;
     if (lexeme[lexLen - 1] == 'l' || lexeme[lexLen - 1] == 'L')
-        type = LONG;
+        type = cLONG;
     if (lexeme[lexLen - 1] == 'f' || lexeme[lexLen - 1] == 'F')
-        type = FLOAT;
+        type = cFLOAT;
     return type;
 }
 
@@ -303,9 +303,9 @@ int checkChar()
     if (lexeme[0] == '\'' && lexeme[lexLen - 1] == '\'')
     {
         if (lexLen == 3)
-            return STRING;
+            return cSTRING;
         else if (lexLen == 4 && lexeme[1] == '\\')
-            return STRING;
+            return cSTRING;
     }
     return UNKNOWN;
 }
@@ -313,7 +313,7 @@ int checkChar()
 int checkString()
 {
     if (lexeme[0] == '\"' && lexeme[lexLen - 1] == '\"')
-        return STRING;
+        return cSTRING;
     return UNKNOWN;
 }
 
