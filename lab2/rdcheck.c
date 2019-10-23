@@ -95,8 +95,9 @@ int main(int argc, char **argv)
             return 1;
         }
     }
-    //printf("%d",yylex());
-    program();
+    
+    if(program())
+    printf("Successfully match all content.\n");
     return 0;
 }
 
@@ -143,7 +144,7 @@ void advance()
 {
     tokenType = yylex();
     if (tokenType == EOF)
-        printf("Successfully match all content.\n");
+        printf("Encounter EOF\n");
     else if (tokenType == UNKNOWN)
         printf("unknown:  %s\n", yytext);
     else
