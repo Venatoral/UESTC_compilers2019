@@ -438,8 +438,10 @@ int statement()
         if (declarator_list())
         {
             if (tokenType == ';')
+            {
                 isMatch = 1;
-            advance();
+                advance();
+            }
         }
     }
     else if (tokenType == '{')
