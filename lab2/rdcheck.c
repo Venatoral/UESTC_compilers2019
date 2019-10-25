@@ -96,6 +96,7 @@ int main(int argc, char **argv)
         }
     }
 
+    advance(); //first advance
     if (program())
         printf("Successfully match all content.\n");
     else
@@ -160,7 +161,6 @@ void advance()
 int program()
 {
     int isMatch = 0;
-    advance(); //first advance
 label:
     if (external_declaration())
     {
