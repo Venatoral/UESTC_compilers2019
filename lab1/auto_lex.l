@@ -5,10 +5,13 @@
 
 int assign();
 /*
-enum TokenType
+enum CharClass
 {
     //EOF = -1,
     UNKNOWN = 0,
+    LETTER,
+    DIGIT,
+    SYMBOL,
     ID = 260,
     cBYTE,
     cSHORT,
@@ -20,18 +23,18 @@ enum TokenType
     cSTRING,
     cBOOL,
     //"false"270, "true"271,
-    //single operator ascii
-    //"=="278, "!="279, "++"280, "+="281, "--"282, "-="283, "*="284, "/="285, "%="286, 
-    //"&&"287, "&="288, "||"289, "|="290, "^="291, 
-    //"<<"292, "<="293, "<<="294, ">>"295, ">>>"296, ">="297, ">>="298, ">>>="299, 
+    //single operator = ascii
+    //"=="278, "!="279, "++"280, "+="281, "--"282, "-="283, "*="284, "/="285, "%="286,
+    //"&&"287, "&="288, "||"289, "|="290, "^="291,
+    //"<<"292, "<="293, "<<="294, ">>"295, ">>>"296, ">="297, ">>="298, ">>>="299,
     //"private"300, "protected"301, "public"302,
-    //"abstract"303, "class"304, "extends"305, "final"306, "implements"307, "interface"308, "native"309, "new"310, "static"311, "strictfp"312, "synchronized"313, "transient"314, "volatile"315, 
-    //"break"316, "case"317, "continue"318, "default"319, "do"320, "else"321, "for"322, "if"323, "instanceof"324, "return"325, "switch"326, "while"327, 
-    //"assert"328, "catch"329, "finally"330, "throw"331, "throws"332, "try"333, 
-    //"import"334, "package"335, 
-    //"boolean"336, "byte"337, "char"338, "double"339, "float"340, "int"341, "long"342, "short"343, 
-    //"super"344, "this"345, "void"346, 
-    //"goto"347, "const"348, "null",349 
+    //"abstract"303, "class"304, "extends"305, "final"306, "implements"307, "interface"308, "native"309, "new"310, "static"311, "strictfp"312, "synchronized"313, "transient"314, "volatile"315,
+    //"break"316, "case"317, "continue"318, "default"319, "do"320, "else"321, "for"322, "if"323, "instanceof"324, "return"325, "switch"326, "while"327,
+    //"assert"328, "catch"329, "finally"330, "throw"331, "throws"332, "try"333,
+    //"import"334, "package"335,
+    //"boolean"336, "byte"337, "char"338, "double"339, "float"340, "int"341, "long"342, "short"343,
+    //"super"344, "this"345, "void"346,
+    //"goto"347, "const"348, "null"349,
 };
 */
 %}
@@ -72,7 +75,6 @@ unknown     .|[\\\'\"\`\#]
 %%
 
 int main(int argc, char const *argv[]) {
-    int yyres = 1;
     if (argc >= 2) {
         yyin = fopen(argv[1], "r");
         if (yyin == NULL) {
@@ -87,9 +89,8 @@ int main(int argc, char const *argv[]) {
             return 1;
         }
     }
-    while (yyres != EOF) {
-        yyres = yylex();
-    }
+    
+    while (yylex() != EOF) ;
     return 0;
 }
 
