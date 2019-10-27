@@ -168,6 +168,7 @@ void removeComment()
     }
 }
 
+//recognize the integers, strings, identifiers, keywords, operators, comments.
 void lexer()
 {
     lexLen = 0;
@@ -255,7 +256,7 @@ void lexer()
         }
         nextToken = checkString();
         break;
-    case SYMBOL:
+    case SYMBOL: //operators
         addSymbol();
         nextToken = checkSymbol();
         break;
