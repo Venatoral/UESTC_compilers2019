@@ -6,6 +6,7 @@ lab1/test.exe
 lab1/test
 lab1/input
 lab1/output
+lab1/test.java
 
 lab2/rdcheck.o
 lab2/rdparser.o
@@ -15,3 +16,4 @@ lab2/test.exe
 lab2/test
 lab2/input
 lab2/output
+lab2/test.c
