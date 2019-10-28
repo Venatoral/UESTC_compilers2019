@@ -106,10 +106,8 @@ past id_list();
 int main(int argc, char **argv)
 {
     past root = NULL;
-    char *name = "stdio";
     if (argc >= 2)
     {
-        name = argv[1];
         yyin = fopen(argv[1], "r");
         if (yyin == NULL)
         {
@@ -128,7 +126,7 @@ int main(int argc, char **argv)
     }
 
     advance(); //first advance
-    root = newAstNode(name, "", program(), NULL);
+    root = program();
     showAst(root, 0);
     freeAst(root);
     return 0;
