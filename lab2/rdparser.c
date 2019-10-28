@@ -156,8 +156,8 @@ void showAst(past node, int level)
     if (strcmp(node->nodeType, "list") != 0)
     {
         for (i = 0; i < level; i++)
-            printf("  ");
-        printf("%s: %s\n", node->nodeType, node->ivalue);
+            fprintf(yyout, "  ");
+        fprintf(yyout, "%s: %s\n", node->nodeType, node->ivalue);
 
         showAst(node->left, level + 1);
         showAst(node->right, level + 1);

@@ -98,9 +98,9 @@ int main(int argc, char **argv)
 
     advance(); //first advance
     if (program())
-        printf("Successfully match all content.\n");
+        fprintf(yyout, "Successfully match all content.\n");
     else
-        printf("ERROR\n");
+        fprintf(yyout, "ERROR\n");
     return 0;
 }
 
@@ -147,11 +147,11 @@ void advance()
 {
     tokenType = yylex();
     if (tokenType == EOF)
-        ; //printf("Encounter EOF\n");
+        ; //fprintf(yyout, "Encounter EOF\n");
     else if (tokenType == UNKNOWN)
-        printf("unknown:  %s\n", yytext);
+        fprintf(yyout, "unknown:  %s\n", yytext);
     else
-        printf("token: %s\n", yytext);
+        fprintf(yyout, "token: %s\n", yytext);
 }
 
 //  program
