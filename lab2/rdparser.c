@@ -399,7 +399,7 @@ past declarator()
     past root = NULL;
     if (tokenType == ID)
     {
-        root = newAstNode("Varible", strdup(yytext), NULL, NULL);
+        root = newAstNode("VaribleDecl", strdup(yytext), NULL, NULL);
         advance();
         if (tokenType == '=')
         {
@@ -408,7 +408,7 @@ past declarator()
         }
         else if (tokenType == '(')
         {
-            root->nodeType = "Function";
+            root->nodeType = "FunctionDecl";
             advance();
             root->left = parameter_list();
             if (tokenType == ')')
