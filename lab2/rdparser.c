@@ -13,7 +13,8 @@ typedef struct _ast *past;
 struct _ast
 {
     char *nodeType;
-    char *ivalue;
+    char *content;
+    int ivalue;
     past left;
     past right;
 };
@@ -75,9 +76,10 @@ char *strdup(const char *str)
 }
 */
 
-past newAstNode(char *nodeType, char *ivalue, past left, past right);
+past newAstNode(char *nodeType, char *content, past left, past right);
 void showAst(past node, int nest);
 void freeAst(past node);
+void removeQuot(char *content);
 int tokenType_is_ASSIGN();
 int tokenType_is_CMP();
 
@@ -132,7 +134,7 @@ int main(int argc, char **argv)
     return 0;
 }
 
-past newAstNode(char *nodeType, char *ivalue, past left, past right)
+past newAstNode(char *nodeType, char *content, past left, past right)
 {
     past node = (past)malloc(sizeof(ast));
     if (node == NULL)
@@ -141,7 +143,8 @@ past newAstNode(char *nodeType, char *ivalue, past left, past right)
         exit(0);
     }
     node->nodeType = nodeType;
-    node->ivalue = ivalue;
+    node->content = content;
+    node->ivalue = 0;
     node->left = left;
     node->right = right;
     return node;
@@ -153,11 +156,11 @@ void showAst(past node, int level)
     if (node == NULL)
         return;
 
-    if (strcmp(node->nodeType, "list") != 0)
+    if (strcmp(node->nodeType, "__list__") != 0)
     {
         for (i = 0; i < level; i++)
             fprintf(yyout, "  ");
-        fprintf(yyout, "%s: %s\n", node->nodeType, node->ivalue);
+        fprintf(yyout, "%s: %s\n", node->nodeType, node->content);
 
         showAst(node->left, level + 1);
         showAst(node->right, level + 1);
@@ -177,8 +180,21 @@ void freeAst(past node)
     }
     freeAst(node->left);
     freeAst(node->right);
-    free(node->ivalue);
+    free(node->content);
     free(node);
+}
+
+void removeQuot(char *content)
+{
+    //use this function only when string content start and end with '\""
+    content++;
+    while (*content != '\"')
+    {
+        *(content - 1) = *(content);
+        content += 1;
+    }
+    content--;
+    *content = '\0';
 }
 
 int tokenType_is_ASSIGN()
@@ -243,7 +259,7 @@ past program()
     past root = NULL;
     if (root = external_declaration())
     {
-        root = newAstNode("list", "", root, program());
+        root = newAstNode("__list__", "", root, program());
     }
     return root;
 }
@@ -257,7 +273,7 @@ past external_declaration()
     if (root = type())
     {
         root = newAstNode("DeclStmt", "",
-                          root, newAstNode("list", "", NULL, NULL));
+                          root, newAstNode("__list__", "", NULL, NULL));
         if (root->right->left = declarator())
         {
             if (root->right->right = decl_or_stmt())
@@ -317,7 +333,7 @@ past declarator_list()
     past root = NULL;
     if (root = declarator())
     {
-        root = newAstNode("list", "", root, NULL);
+        root = newAstNode("__list__", "", root, NULL);
         if (tokenType == ',')
         {
             advance();
@@ -336,7 +352,7 @@ past intstr_list()
     past root = NULL;
     if (root = initializer())
     {
-        root = newAstNode("list", "", root, NULL);
+        root = newAstNode("__list__", "", root, NULL);
         if (tokenType == ',')
         {
             advance();
@@ -356,11 +372,13 @@ past initializer()
     if (tokenType == NUMBER)
     {
         root = newAstNode("IntegerLiteral", strdup(yytext), NULL, NULL);
+        root->ivalue = atoi(yytext);
         advance();
     }
     else if (tokenType == STRING)
     {
         root = newAstNode("StringLiteral", strdup(yytext), NULL, NULL);
+        removeQuot(root->content);
         advance();
     }
     return root;
@@ -437,7 +455,7 @@ past parameter_list()
     past root = NULL;
     if (root = parameter())
     {
-        root = newAstNode("list", NULL, root, NULL);
+        root = newAstNode("__list__", NULL, root, NULL);
         if (tokenType == ',')
         {
             advance();
@@ -527,7 +545,7 @@ past statement()
     else if (tokenType == IF)
     {
         root = newAstNode("IfStmt", "",
-                          NULL, newAstNode("list", "", NULL, NULL));
+                          NULL, newAstNode("__list__", "", NULL, NULL));
         advance();
         if (tokenType == '(')
         {
@@ -612,7 +630,7 @@ past statement_list()
     past root = NULL;
     if (root = statement())
     {
-        root = newAstNode("list", NULL, root, statement_list());
+        root = newAstNode("__list__", NULL, root, statement_list());
     }
     return root;
 }
@@ -733,11 +751,11 @@ past primary_expr()
     past root = NULL;
     if (tokenType == ID)
     {
-        root = newAstNode("Varible", strdup(yytext), NULL, NULL);
+        root = newAstNode("VaribleRef", strdup(yytext), NULL, NULL);
         advance();
         if (tokenType == '(')
         {
-            root->nodeType = "Function";
+            root->nodeType = "FunctionRef";
             advance();
             root->left = expr_list();
             if (tokenType == ')')
@@ -784,11 +802,13 @@ past primary_expr()
     else if (tokenType == NUMBER)
     {
         root = newAstNode("IntegerLiteral", strdup(yytext), NULL, NULL);
+        root->ivalue = atoi(yytext);
         advance();
     }
     else if (tokenType == STRING)
     {
         root = newAstNode("StringLiteral", strdup(yytext), NULL, NULL);
+        removeQuot(root->content);
         advance();
     }
     return root;
@@ -803,7 +823,7 @@ past expr_list()
     past root = NULL;
     if (root = expr())
     {
-        root = newAstNode("list", NULL, root, NULL);
+        root = newAstNode("__list__", NULL, root, NULL);
         if (tokenType == ',')
         {
             advance();
@@ -822,7 +842,7 @@ past id_list()
     past root = NULL;
     if (tokenType == ID)
     {
-        root = newAstNode("list", NULL,
+        root = newAstNode("__list__", NULL,
                           newAstNode("Varible", strdup(yytext), NULL, NULL), NULL);
         advance();
         if (tokenType == ',')
